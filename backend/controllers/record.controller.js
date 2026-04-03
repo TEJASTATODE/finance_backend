@@ -1,18 +1,13 @@
-
 const { FinancialRecord, User } = require("../models");
 const { Op } = require("sequelize");
 
 exports.getRecords = async (req, res) => {
   try {
-    // 1. Pagination
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-
     const { type, category, startDate, endDate, search } = req.query;
-
-
     const where = {};
 
     if (type) {
@@ -45,16 +40,11 @@ exports.getRecords = async (req, res) => {
       limit,
       offset,
       order: [["date", "DESC"]],
-      include: [
-        {
-          model: User,
-          attributes: ["id", "name", "email"],
-        },
-      ],
+      include: [{ model: User, attributes: ["id", "name", "email"] }],
     });
 
     res.status(200).json({
-      message: "Records fetched successfully.",
+      message: "Records fetched.",
       data: rows,
       pagination: {
         total: count,
@@ -63,7 +53,6 @@ exports.getRecords = async (req, res) => {
         pages: Math.ceil(count / limit),
       },
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -71,26 +60,16 @@ exports.getRecords = async (req, res) => {
 
 exports.getRecord = async (req, res) => {
   try {
-
     const record = await FinancialRecord.findOne({
       where: { id: req.params.id },
-      include: [
-        {
-          model: User,
-          attributes: ["id", "name", "email"],
-        },
-      ],
+      include: [{ model: User, attributes: ["id", "name", "email"] }],
     });
 
     if (!record) {
       return res.status(404).json({ message: "Record not found." });
     }
 
-    res.status(200).json({
-      message: "Record fetched successfully.",
-      data: record,
-    });
-
+    res.status(200).json({ message: "Record fetched.", data: record });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -113,7 +92,6 @@ exports.createRecord = async (req, res) => {
       return res.status(400).json({ message: "Invalid type. Must be income or expense." });
     }
 
-    // 4. Validate date
     if (isNaN(new Date(date).getTime())) {
       return res.status(400).json({ message: "Invalid date format." });
     }
@@ -127,20 +105,14 @@ exports.createRecord = async (req, res) => {
       userId: req.user.id,
     });
 
-    res.status(201).json({
-      message: "Record created successfully.",
-      data: record,
-    });
-
+    res.status(201).json({ message: "Record created.", data: record });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-
 exports.updateRecord = async (req, res) => {
   try {
-  
     const record = await FinancialRecord.findOne({
       where: { id: req.params.id },
     });
@@ -150,7 +122,6 @@ exports.updateRecord = async (req, res) => {
     }
 
     const { amount, type, category, date, note } = req.body;
-
 
     if (amount !== undefined) {
       if (isNaN(amount) || Number(amount) <= 0) {
@@ -165,7 +136,6 @@ exports.updateRecord = async (req, res) => {
       }
     }
 
-
     if (date !== undefined) {
       if (isNaN(new Date(date).getTime())) {
         return res.status(400).json({ message: "Invalid date format." });
@@ -179,11 +149,8 @@ exports.updateRecord = async (req, res) => {
       date: date ?? record.date,
       note: note ?? record.note,
     });
-    res.status(200).json({
-      message: "Record updated successfully.",
-      data: record,
-    });
 
+    res.status(200).json({ message: "Record updated.", data: record });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -191,7 +158,6 @@ exports.updateRecord = async (req, res) => {
 
 exports.deleteRecord = async (req, res) => {
   try {
-   
     const record = await FinancialRecord.findOne({
       where: { id: req.params.id },
     });
@@ -202,10 +168,7 @@ exports.deleteRecord = async (req, res) => {
 
     await record.destroy();
 
-    res.status(200).json({
-      message: "Record deleted successfully.",
-    });
-
+    res.status(200).json({ message: "Record deleted." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
