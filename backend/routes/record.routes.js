@@ -10,15 +10,10 @@ const {
 } = require("../controllers/record.controller");
 const { authenticate } = require("../middleware/auth");
 const { authorize } = require("../middleware/role");
-
 router.get("/", authenticate, authorize("analyst", "admin"), getRecords);
-
 router.get("/:id", authenticate, authorize( "analyst", "admin"), getRecord);
-
 router.post("/", authenticate, authorize("analyst", "admin"), createRecord);
-
 router.patch("/:id", authenticate, authorize("analyst", "admin"), updateRecord);
-
 router.delete("/:id", authenticate, authorize("admin"), deleteRecord);
 
 module.exports = router;
