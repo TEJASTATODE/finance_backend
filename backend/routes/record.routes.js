@@ -11,9 +11,9 @@ const {
 const { authenticate } = require("../middleware/auth");
 const { authorize } = require("../middleware/role");
 
-router.get("/", authenticate, authorize("viewer", "analyst", "admin"), getRecords);
+router.get("/", authenticate, authorize("analyst", "admin"), getRecords);
 
-router.get("/:id", authenticate, authorize("viewer", "analyst", "admin"), getRecord);
+router.get("/:id", authenticate, authorize( "analyst", "admin"), getRecord);
 
 router.post("/", authenticate, authorize("analyst", "admin"), createRecord);
 

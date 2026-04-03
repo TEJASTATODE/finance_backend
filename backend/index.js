@@ -7,17 +7,38 @@ const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const recordRoutes = require("./routes/record.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
-
+const rateLimit = require("express-rate-limit");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use("/api/document", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: {
+    message: "Too many requests"
+  },
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 10,
+  message: {
+    message: "Too many login attempts"
+  },
+});
+
+app.use(globalLimiter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Finance Dashboard API Running." });
 });
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth",authLimiter, authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/records", recordRoutes);
 app.use("/api/dashboard", dashboardRoutes);

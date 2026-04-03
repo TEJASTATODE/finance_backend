@@ -10,11 +10,9 @@ const {
 const { authenticate } = require("../middleware/auth");
 const { authorize } = require("../middleware/role");
 
-router.get("/summary", authenticate, authorize("analyst", "admin"), getSummary);
-router.get("/category", authenticate, authorize("analyst", "admin"), getCategoryWise);
-
-router.get("/recent", authenticate, authorize("analyst", "admin"), getRecentActivity);
-
-router.get("/trends", authenticate, authorize("analyst", "admin"), getTrends);
+router.get("/summary", authenticate, authorize("viewer", "analyst", "admin"), getSummary);
+router.get("/category", authenticate, authorize("viewer", "analyst", "admin"), getCategoryWise);
+router.get("/recent", authenticate, authorize("viewer", "analyst", "admin"), getRecentActivity);
+router.get("/trends", authenticate, authorize("viewer", "analyst", "admin"), getTrends);
 
 module.exports = router;

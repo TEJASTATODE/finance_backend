@@ -5,9 +5,7 @@ const { Op, fn, col, literal } = require("sequelize");
 exports.getSummary = async (req, res) => {
   try {
 
-    const records = await FinancialRecord.findAll({
-      where: { deletedAt: null },
-    });
+    const records = await FinancialRecord.findAll();
 
     let totalIncome = 0;
     let totalExpenses = 0;
@@ -40,9 +38,7 @@ exports.getSummary = async (req, res) => {
 exports.getCategoryWise = async (req, res) => {
   try {
 
-    const records = await FinancialRecord.findAll({
-      where: { deletedAt: null },
-    });
+    const records = await FinancialRecord.findAll();
 
     const categoryTotals = {};
 
@@ -93,7 +89,6 @@ exports.getRecentActivity = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
 
     const records = await FinancialRecord.findAll({
-      where: { deletedAt: null },
       order: [["date", "DESC"]],
       limit,
     });
@@ -111,7 +106,6 @@ exports.getRecentActivity = async (req, res) => {
 exports.getTrends = async (req, res) => {
   try {
     const records = await FinancialRecord.findAll({
-      where: { deletedAt: null },
       order: [["date", "ASC"]],
     });
 

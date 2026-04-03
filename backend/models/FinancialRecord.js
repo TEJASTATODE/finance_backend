@@ -1,3 +1,4 @@
+
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
@@ -9,8 +10,11 @@ const FinancialRecord = sequelize.define("FinancialRecord", {
   },
 
   amount: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL(12, 2),
     allowNull: false,
+    validate: {
+      min: 0.01,
+    },
   },
 
   type: {
@@ -20,18 +24,36 @@ const FinancialRecord = sequelize.define("FinancialRecord", {
 
   category: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
 
   date: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
   },
 
   note: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
+
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: "Users",
+      key: "id",
+    },
+  },
+
 }, {
   timestamps: true,
+  paranoid: true,
+  indexes: [
+    { fields: ["userId"] },
+    { fields: ["date"] },
+    { fields: ["type"] },
+  ],
 });
 
 module.exports = FinancialRecord;
