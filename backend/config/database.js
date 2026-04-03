@@ -13,6 +13,7 @@ const sequelize = new Sequelize(
     logging: false,
     dialectOptions: isProduction
       ? {
+        // i have added ssl for deployment on render 
           ssl: {
             require: true,
             rejectUnauthorized: false,
